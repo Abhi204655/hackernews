@@ -4,7 +4,7 @@ const BASE_URL = 'https://hacker-news.firebaseio.com/v0/';
 
 const JSON_DATA = '.json?print=preety';
 
-const PAGE_LIMIT = 30;
+const PAGE_LIMIT = 50;
 const getPageSlice = (limit, page = 0) => ({ begin: page * limit, end: (page + 1) * limit });
 const getPageValues = ({ begin, end, items }) => items.slice(begin, end);
 

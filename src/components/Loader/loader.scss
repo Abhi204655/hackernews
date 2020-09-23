@@ -1,0 +1,46 @@
+@import '../../globals';
+.loader{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.3em;
+
+    & > span{
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: $mainYellow;
+        margin: 0 5px;
+        animation-name: animate;
+        animation-timing-function: forwards;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+
+        &:nth-of-type(1){
+            animation-delay: 0s;
+        }
+        &:nth-of-type(2){
+
+            animation-delay: 0.2s;
+        }
+        &:nth-of-type(3){
+
+            animation-delay: 0.4s;
+        }
+    }
+
+    @keyframes animate {
+        0%{
+            // opacity: 0;
+            transform: translateY(0px);
+        }
+        50%{
+            // opacity: 1;
+            transform: translateY(30px);
+        }
+        100%{
+            // opacity: 0;
+            transform: translateY(0px);
+        }
+    }
+}
