@@ -13,10 +13,10 @@ import { getTopStoryIds, getStoriesByPage } from '../../api';
 
 // import axios from 'axios';
 
-export const getStoriesIds = () => async dispatch => {
+export const getStoriesIds = (endpoint) => async dispatch => {
     dispatch({ type: FETCH_STORY_IDS_REQUEST });
-
-    getTopStoryIds().then(data => {
+    console.log('endpoint from actions', endpoint);
+    getTopStoryIds(endpoint).then(data => {
         dispatch({ type: FETCH_STORY_IDS_SUCCESS, payload: data });
         dispatch(getStories({ storyIds: data, page: 0 }));
     }).catch(err => dispatch({ type: FETCH_STORY_IDS_FAILURE }));

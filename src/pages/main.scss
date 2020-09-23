@@ -1,0 +1,14 @@
+@import '../globals';
+.app{
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+
+    &__list__container{
+        width: 100%;
+        height: auto;
+        background: $background;
+        padding: 2em 0;
+        margin: 8em 0em;
+    }
+}
