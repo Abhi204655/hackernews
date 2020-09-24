@@ -12,3 +12,28 @@
         margin: 8em 0em;
     }
 }
+
+.not-found{
+    display: flex;
+    margin: 3em 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & h2{
+        font-family: $mainFont;
+        color: $mainYellow;
+        font-size: 3em;
+
+        & span{
+            color: black;
+        }
+    }
+
+    & p{
+        font-family: $poppins;
+        margin: 0.5em 0;
+        letter-spacing: 1px;
+        font-size: 1em;
+    }
+}

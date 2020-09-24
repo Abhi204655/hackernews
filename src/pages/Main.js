@@ -102,7 +102,12 @@ class App extends React.Component {
             )
         } else {
             if (filteredStories.length === 0) {
-                return <p>Not Found</p>
+                return (
+                    <div className="not-found">
+                        <h2>Not <span>Found</span>.</h2>
+                        <p>Search for some other keyword</p>
+                    </div>
+                )
             } else {
                 return (
                     filteredStories.map(story => <ListItem key={story.id} story={story} />)
@@ -112,7 +117,6 @@ class App extends React.Component {
     }
 
     render() {
-
         return (
             <div className="app">
                 <div className="app__header--wrapper">
