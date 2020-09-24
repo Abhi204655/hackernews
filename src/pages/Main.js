@@ -6,24 +6,49 @@ import './main.scss';
 import { ListItem, Loader, Footer, Header, SearchBox } from '../components';
 import { connect } from 'react-redux';
 import { getStoriesIds, getStories, filterStories } from '../redux/actions/storyActions';
-import { hasMoreStoriesSelector } from '../redux/selectors';
+import { hasMoreTopStoriesSelector, hasMoreBestStoriesSelector, hasMoreNewStoriesSelector } from '../redux/selectors';
 
 
 class App extends React.Component {
 
-    state = {
-        endpoint: ''
-    }
+    // state = {
+    //     endpoint: ''
+    // }
 
     static propTypes = {
-        stories: PropTypes.array.isRequired,
-        page: PropTypes.number.isRequired,
-        storyIds: PropTypes.array.isRequired,
+        // stories: PropTypes.array.isRequired,
+        // page: PropTypes.number.isRequired,
+        // storyIds: PropTypes.array.isRequired,
+        // isFetching: PropTypes.bool.isRequired,
+        // filteredStories: PropTypes.array.isRequired,
+        // keyword: PropTypes.string.isRequired,
+        // hasMoreStories: PropTypes.bool.isRequired,
+        // fetchStories: PropTypes.func.isRequired,
+        // fetchStoriesFirstPage: PropTypes.func.isRequired,
+        // filterStories: PropTypes.func.isRequired
+
+
+        storiesTop: PropTypes.array.isRequired,
+        storiesBest: PropTypes.array.isRequired,
+        storiesNew: PropTypes.array.isRequired,
+        pageTop: PropTypes.number.isRequired,
+        pageBest: PropTypes.number.isRequired,
+        pageNew: PropTypes.number.isRequired,
+        storyIdsTop: PropTypes.array.isRequired,
+        storyIdsBest: PropTypes.array.isRequired,
+        storyIdsNew: PropTypes.array.isRequired,
+
         isFetching: PropTypes.bool.isRequired,
         filteredStories: PropTypes.array.isRequired,
         keyword: PropTypes.string.isRequired,
-        hasMoreStories: PropTypes.bool.isRequired,
-        fetchStories: PropTypes.func.isRequired,
+
+        hasMoreTopStories: PropTypes.bool.isRequired,
+        hasMoreBestStories: PropTypes.bool.isRequired,
+        hasMoreNewStories: PropTypes.bool.isRequired,
+
+        fetchTopStories: PropTypes.func.isRequired,
+        fetchBestStories: PropTypes.func.isRequired,
+        fetchNewStories: PropTypes.func.isRequired,
         fetchStoriesFirstPage: PropTypes.func.isRequired,
         filterStories: PropTypes.func.isRequired
     };
@@ -31,18 +56,20 @@ class App extends React.Component {
 
     componentDidMount() {
         let endpoint = this.props.match.params.endpoint;
-        console.log(endpoint);
         this.setState({ endpoint });
-        this.props.fetchStoriesFirstPage(endpoint);
+        this.props.fetchStoriesFirstPage("topstories");
+        this.props.fetchStoriesFirstPage("newstories");
+        this.props.fetchStoriesFirstPage("beststories");
+        console.log('rendering again');
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.match.params.endpoint !== nextProps.match.params.endpoint) {
-            let endpoint = nextProps.match.params.endpoint;
-            console.log(endpoint);
-            this.props.fetchStoriesFirstPage(endpoint);
-        }
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     if (this.props.match.params.endpoint !== nextProps.match.params.endpoint) {
+    //         let endpoint = nextProps.match.params.endpoint;
+    //         console.log(endpoint);
+    //         this.props.fetchStoriesFirstPage(endpoint);
+    //     }
+    // }
 
     // static getDerivedStateFromProps(nextProps, prevState) {
     //     if (nextProps.match.params.endpoint !== prevState.match.params.endpoint) {
@@ -71,20 +98,60 @@ class App extends React.Component {
     //     this.props.fetchStoriesFirstPage(endpoint);
     // }
 
-    fetchStories = () => {
-        const { storyIds, page, fetchStories, isFetching } = this.props;
+    fetchTopStories = () => {
+        const { storyIdsTop, pageTop, fetchTopStories, isFetching } = this.props;
+
         if (!isFetching) {
-            fetchStories({ storyIds, page });
+            fetchTopStories({ storyIdsTop, pageTop });
+        }
+    };
+
+    fetchBestStories = () => {
+        const { storyIdsBest, pageBest, fetchBestStories, isFetching } = this.props;
+        if (!isFetching) {
+            fetchBestStories({ storyIdsBest, pageBest });
+        }
+    };
+    fetchNewStories = () => {
+        const { storyIdsNew, pageNew, fetchNewStories, isFetching } = this.props;
+
+        if (!isFetching) {
+            fetchNewStories({ storyIdsNew, pageNew });
         }
     };
 
     renderStories = () => {
-        let { stories, filteredStories, hasMoreStories, keyword } = this.props;
+        let { storiesTop, storiesBest, storiesNew, filteredStories, hasMoreTopStories, hasMoreNewStories, hasMoreBestStories, keyword } = this.props;
+        let { endpoint } = this.props.match.params;
+        let fetchStoriesFunc;
+        let curStories;
+        let hasMoreStories;
+        switch (endpoint) {
+            case "topstories" || '':
+                fetchStoriesFunc = this.fetchTopStories;
+                curStories = storiesTop;
+                hasMoreStories = hasMoreTopStories;
+                break;
+            case "newstories":
+                fetchStoriesFunc = this.fetchNewStories;
+                curStories = storiesNew;
+                hasMoreStories = hasMoreNewStories;
+                break;
+            case "beststories":
+                fetchStoriesFunc = this.fetchBestStories;
+                curStories = storiesBest;
+                hasMoreStories = hasMoreBestStories;
+                break;
+            default:
+                fetchStoriesFunc = this.fetchTopStories;
+                curStories = storiesTop;
+                break;
+        }
         if (keyword === '') {
             return (
                 <InfiniteScroll
-                    dataLength={stories.length}
-                    next={this.fetchStories}
+                    dataLength={curStories.length}
+                    next={fetchStoriesFunc}
                     hasMore={hasMoreStories}
                     endMessage={
                         <p style={{ textAlign: 'center' }}>
@@ -97,7 +164,7 @@ class App extends React.Component {
                         overflow: 'visible',
                     }}
                 >
-                    {stories.map(story => <ListItem key={story.id} story={story} />)}
+                    {curStories.map(story => <ListItem key={story.id} story={story} />)}
                 </InfiniteScroll>
             )
         } else {
@@ -133,17 +200,39 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    stories: state.story.stories,
-    page: state.story.page,
-    storyIds: state.story.storyIds,
+    // stories: state.story.stories,
+    // page: state.story.page,
+    // storyIds: state.story.storyIds,
+    // isFetching: state.story.isFetching,
+    // filteredStories: state.story.filteredStories,
+    // keyword: state.story.keyword,
+    // hasMoreStories: hasMoreStoriesSelector(state),
+
+
+    storiesTop: state.story.storiesTop,
+    storiesBest: state.story.storiesBest,
+    storiesNew: state.story.storiesNew,
+
+    pageTop: state.story.pageTop,
+    pageBest: state.story.pageBest,
+    pageNew: state.story.pageNew,
+
+    storyIdsTop: state.story.storyIdsTop,
+    storyIdsBest: state.story.storyIdsBest,
+    storyIdsNew: state.story.storyIdsNew,
+
     isFetching: state.story.isFetching,
     filteredStories: state.story.filteredStories,
     keyword: state.story.keyword,
-    hasMoreStories: hasMoreStoriesSelector(state),
+    hasMoreTopStories: hasMoreTopStoriesSelector(state),
+    hasMoreBestStories: hasMoreBestStoriesSelector(state),
+    hasMoreNewStories: hasMoreNewStoriesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchStories: ({ storyIds, page }) => dispatch(getStories({ storyIds, page })),
+    fetchTopStories: ({ storyIdsTop, pageTop }) => dispatch(getStories({ storyIdsTop, pageTop })),
+    fetchBestStories: ({ storyIdsBest, pageBest }) => dispatch(getStories({ storyIdsBest, pageBest })),
+    fetchNewStories: ({ storyIdsNew, pageNew }) => dispatch(getStories({ storyIdsNew, pageNew })),
     fetchStoriesFirstPage: (endpoint) => dispatch(getStoriesIds(endpoint)),
     filterStories: (keyword) => dispatch(filterStories(keyword))
 });

@@ -1,10 +1,28 @@
 import { createSelector } from 'reselect';
 
-const storyIdsSelector = state => state.story.storyIds;
-const storiesSelector = state => state.story.stories;
+const storyIdsSelectorTop = state => state.story.storyIdsTop;
+const storiesSelectorTop = state => state.story.storiesTop;
 
-export const hasMoreStoriesSelector = createSelector(
-    storyIdsSelector,
-    storiesSelector,
-    (storyIds, stories) => storyIds.length > stories.length,
+const storyIdsSelectorBest = state => state.story.storyIdsBest;
+const storiesSelectorBest = state => state.story.storiesBest;
+
+const storyIdsSelectorNew = state => state.story.storyIdsNew;
+const storiesSelectorNew = state => state.story.storiesNew;
+
+export const hasMoreTopStoriesSelector = createSelector(
+    storyIdsSelectorTop,
+    storiesSelectorTop,
+    (storyIdsTop, storiesTop) => storyIdsTop.length > storiesTop.length,
+);
+
+export const hasMoreBestStoriesSelector = createSelector(
+    storyIdsSelectorBest,
+    storiesSelectorBest,
+    (storyIdsBest, storiesBest) => storyIdsBest.length > storiesBest.length,
+);
+
+export const hasMoreNewStoriesSelector = createSelector(
+    storyIdsSelectorNew,
+    storiesSelectorNew,
+    (storyIdsNew, storiesNew) => storyIdsNew.length > storiesNew.length,
 );
