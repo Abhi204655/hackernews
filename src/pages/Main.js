@@ -11,22 +11,11 @@ import { hasMoreTopStoriesSelector, hasMoreBestStoriesSelector, hasMoreNewStorie
 
 class App extends React.Component {
 
-    // state = {
-    //     endpoint: ''
-    // }
+    state = {
+        endpoint: ''
+    }
 
     static propTypes = {
-        // stories: PropTypes.array.isRequired,
-        // page: PropTypes.number.isRequired,
-        // storyIds: PropTypes.array.isRequired,
-        // isFetching: PropTypes.bool.isRequired,
-        // filteredStories: PropTypes.array.isRequired,
-        // keyword: PropTypes.string.isRequired,
-        // hasMoreStories: PropTypes.bool.isRequired,
-        // fetchStories: PropTypes.func.isRequired,
-        // fetchStoriesFirstPage: PropTypes.func.isRequired,
-        // filterStories: PropTypes.func.isRequired
-
 
         storiesTop: PropTypes.array.isRequired,
         storiesBest: PropTypes.array.isRequired,
@@ -60,63 +49,41 @@ class App extends React.Component {
         this.props.fetchStoriesFirstPage("topstories");
         this.props.fetchStoriesFirstPage("newstories");
         this.props.fetchStoriesFirstPage("beststories");
-        console.log('rendering again');
+
+        console.log('rendering');
+
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if (this.props.match.params.endpoint !== nextProps.match.params.endpoint) {
-    //         let endpoint = nextProps.match.params.endpoint;
-    //         console.log(endpoint);
-    //         this.props.fetchStoriesFirstPage(endpoint);
-    //     }
-    // }
-
-    // static getDerivedStateFromProps(nextProps, prevState) {
-    //     if (nextProps.match.params.endpoint !== prevState.match.params.endpoint) {
-    //         let endpoint = nextProps.match.params.endpoint;
-    //         console.log(endpoint);
-    //         nextProps.fetchStoriesFirstPage(endpoint);
-    //         return null;
-    //     } else return null;
-    // }
-
-    // static getDerivedStateFromProps(props, state) {
-    //     if (state.endpoint !== props.match.params.endpoint) {
-
-    //         let endpoint = props.match.params.endpoint;
-    //         console.log(endpoint);
-    //         props.fetchStoriesFirstPage(endpoint);
-    //         return {
-    //             endpoint: props.match.params.endpoint
-    //         }
-    //     } else return null;
-    // }
-
-    // componentDidUpdate() {
-    //     let endpoint = this.props.match.params.endpoint;
-    //     console.log(endpoint);
-    //     this.props.fetchStoriesFirstPage(endpoint);
-    // }
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.match.params.endpoint !== prevState.endpoint) {
+            window.scrollTo(0, 0);
+            console.log(nextProps.match.params.endpoint);
+            return { endpoint: nextProps.match.params.endpoint };
+        } else return null;
+    }
 
     fetchTopStories = () => {
         const { storyIdsTop, pageTop, fetchTopStories, isFetching } = this.props;
-
+        const { endpoint } = this.props.match.params;
         if (!isFetching) {
-            fetchTopStories({ storyIdsTop, pageTop });
+            fetchTopStories({ storyIds: storyIdsTop, page: pageTop, endpoint });
         }
     };
 
     fetchBestStories = () => {
         const { storyIdsBest, pageBest, fetchBestStories, isFetching } = this.props;
+
+        const { endpoint } = this.props.match.params;
         if (!isFetching) {
-            fetchBestStories({ storyIdsBest, pageBest });
+            fetchBestStories({ storyIds: storyIdsBest, page: pageBest, endpoint });
         }
     };
     fetchNewStories = () => {
         const { storyIdsNew, pageNew, fetchNewStories, isFetching } = this.props;
 
+        const { endpoint } = this.props.match.params;
         if (!isFetching) {
-            fetchNewStories({ storyIdsNew, pageNew });
+            fetchNewStories({ storyIds: storyIdsNew, page: pageNew, endpoint });
         }
     };
 
@@ -126,8 +93,11 @@ class App extends React.Component {
         let fetchStoriesFunc;
         let curStories;
         let hasMoreStories;
+        if (typeof endpoint === "undefined") {
+            endpoint = "topstories";
+        }
         switch (endpoint) {
-            case "topstories" || '':
+            case "topstories":
                 fetchStoriesFunc = this.fetchTopStories;
                 curStories = storiesTop;
                 hasMoreStories = hasMoreTopStories;
@@ -200,14 +170,6 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    // stories: state.story.stories,
-    // page: state.story.page,
-    // storyIds: state.story.storyIds,
-    // isFetching: state.story.isFetching,
-    // filteredStories: state.story.filteredStories,
-    // keyword: state.story.keyword,
-    // hasMoreStories: hasMoreStoriesSelector(state),
-
 
     storiesTop: state.story.storiesTop,
     storiesBest: state.story.storiesBest,
@@ -230,9 +192,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchTopStories: ({ storyIdsTop, pageTop }) => dispatch(getStories({ storyIdsTop, pageTop })),
-    fetchBestStories: ({ storyIdsBest, pageBest }) => dispatch(getStories({ storyIdsBest, pageBest })),
-    fetchNewStories: ({ storyIdsNew, pageNew }) => dispatch(getStories({ storyIdsNew, pageNew })),
+
+    fetchTopStories: ({ storyIds, page, endpoint }) => dispatch(getStories({ storyIds, page, endpoint })),
+    fetchBestStories: ({ storyIds, page, endpoint }) => dispatch(getStories({ storyIds, page, endpoint })),
+    fetchNewStories: ({ storyIds, page, endpoint }) => dispatch(getStories({ storyIds, page, endpoint })),
+
     fetchStoriesFirstPage: (endpoint) => dispatch(getStoriesIds(endpoint)),
     filterStories: (keyword) => dispatch(filterStories(keyword))
 });

@@ -4,12 +4,13 @@ import debounce from 'lodash.debounce';
 import './searchbox.scss';
 import { FaSearch } from 'react-icons/fa';
 import { filterStories, setSearchKeyword } from '../../redux/actions/storyActions';
+import { withRouter } from 'react-router-dom';
+
 
 const SearchBox = () => {
 
     const dispatch = useDispatch();
     const [search, setSearch] = useState('');
-
 
     const handleChange = (e) => {
         setSearch(e.target.value);
@@ -36,4 +37,4 @@ const SearchBox = () => {
     )
 }
 
-export default SearchBox;
+export default withRouter(SearchBox);

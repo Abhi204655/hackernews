@@ -73,7 +73,6 @@ const ActionTypes = {
 export const getStoriesIds = (endpoint = "topstories") => async dispatch => {
 
     let actionSelection;
-    console.log(endpoint);
     switch (endpoint) {
         case "topstories":
             actionSelection = ActionTypesIDS.top;
@@ -91,8 +90,6 @@ export const getStoriesIds = (endpoint = "topstories") => async dispatch => {
 
     // dispatch({ type: FETCH_STORY_IDS_REQUEST });
     dispatch({ type: actionSelection.request });
-
-    console.log('endpoint from actions', endpoint);
     getStoryIds(endpoint).then(data => {
         // dispatch({ type: FETCH_STORY_IDS_SUCCESS, payload: data });
         // dispatch(getStories({ storyIds: data, page: 0 }));
@@ -128,10 +125,8 @@ export const getStories = ({ storyIds, page, endpoint = "topstories" }) => async
     // dispatch({ type: FETCH_STORIES_REQUEST });
     dispatch({ type: actionSelection.request });
 
-    getStoriesByPage(storyIds, page).then(stories => {
+    getStoriesByPage(storyIds, page, endpoint).then(stories => {
         // dispatch({ type: FETCH_STORIES_SUCCESS, payload: { stories } })
-        console.log(storyIds);
-
         dispatch({ type: actionSelection.success, payload: { stories } })
 
     }).catch(err => {
@@ -142,7 +137,7 @@ export const getStories = ({ storyIds, page, endpoint = "topstories" }) => async
 
 export const filterStories = (keyword) => dispatch => {
     if (keyword !== '') {
-        dispatch({ type: FETCH_FILTERED_STORIES, payload: keyword })
+        dispatch({ type: FETCH_FILTERED_STORIES, payload: { keyword } })
     }
 }
 
