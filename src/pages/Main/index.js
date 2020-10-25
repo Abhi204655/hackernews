@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import './main.scss';
-import { ListItem, Loader, Footer, Header, SearchBox } from '../components';
+import { ListItem, Loader, Footer, Header, SearchBox } from '../../components';
 import { connect } from 'react-redux';
-import { getStoriesIds, getStories, filterStories } from '../redux/actions/storyActions';
-import { hasMoreTopStoriesSelector, hasMoreBestStoriesSelector, hasMoreNewStoriesSelector } from '../redux/selectors';
+import { getStoriesIds, getStories, filterStories } from '../../redux/actions/storyActions';
+import { hasMoreTopStoriesSelector, hasMoreBestStoriesSelector, hasMoreNewStoriesSelector } from '../../redux/selectors';
 
 
 class App extends React.Component {
@@ -46,10 +46,12 @@ class App extends React.Component {
     componentDidMount() {
         let endpoint = this.props.match.params.endpoint;
         this.setState({ endpoint });
-        this.props.fetchStoriesFirstPage("topstories");
-        this.props.fetchStoriesFirstPage("newstories");
-        this.props.fetchStoriesFirstPage("beststories");
-
+        let { storiesNew, storiesTop, storiesBest } = this.props;
+        if (storiesNew.length === 0 || storiesBest.length === 0 || storiesTop === 0) {
+            this.props.fetchStoriesFirstPage("topstories");
+            this.props.fetchStoriesFirstPage("newstories");
+            this.props.fetchStoriesFirstPage("beststories");
+        }
         console.log('rendering');
 
     }

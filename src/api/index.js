@@ -24,3 +24,11 @@ export const getStoriesByPage = (ids, page, endpoint) => {
     const storyPromises = activeIds.map(id => getStory(id));
     return Promise.all(storyPromises);
 };
+
+
+export const getCommentsByPage = ({ ids, page }) => {
+    const { begin, end } = getPageSlice(PAGE_LIMIT, page);
+    const activeIds = getPageValues({ begin, end, items: ids });
+    const commmentPromises = activeIds.map(id => getStory(id));
+    return Promise.all(commmentPromises);
+}

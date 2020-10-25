@@ -9,6 +9,9 @@ const storiesSelectorBest = state => state.story.storiesBest;
 const storyIdsSelectorNew = state => state.story.storyIdsNew;
 const storiesSelectorNew = state => state.story.storiesNew;
 
+const commentIdsSelector = state => state.story.commentIds;
+const commentsSelector = state => state.story.comments;
+
 export const hasMoreTopStoriesSelector = createSelector(
     storyIdsSelectorTop,
     storiesSelectorTop,
@@ -25,4 +28,10 @@ export const hasMoreNewStoriesSelector = createSelector(
     storyIdsSelectorNew,
     storiesSelectorNew,
     (storyIdsNew, storiesNew) => storyIdsNew.length > storiesNew.length,
+);
+
+export const hasMoreComments = createSelector(
+    commentIdsSelector,
+    commentsSelector,
+    (commmentIds, comments) => commmentIds.length > comments.length,
 );

@@ -25,12 +25,20 @@ import {
     FETCH_NEWSTORY_IDS_REQUEST,
     FETCH_NEWSTORY_IDS_SUCCESS,
 
-    FETCH_FILTERED_STORIES,
 
+    FETCH_STORY_REQUEST,
+    FETCH_STORY_SUCCESS,
+    FETCH_STORY_FAILURE,
+
+    FETCH_COMMENTS_REQUEST,
+    FETCH_COMMENTS_SUCCESS,
+    FETCH_COMMENTS_FAILURE,
+
+    FETCH_FILTERED_STORIES,
     SET_SEARCH_KEYWORD
 } from './types';
 
-import { getStoryIds, getStoriesByPage } from '../../api';
+import { getStoryIds, getStoriesByPage, getStory, getCommentsByPage } from '../../api';
 
 
 const ActionTypesIDS = {
@@ -100,7 +108,7 @@ export const getStoriesIds = (endpoint = "topstories") => async dispatch => {
     }).catch(err => {
         // dispatch({ type: FETCH_STORY_IDS_FAILURE })
 
-        dispatch({ type: actionSelection.failure })
+        dispatch({ type: actionSelection.failure, payload: err })
     });
 }
 
@@ -131,8 +139,38 @@ export const getStories = ({ storyIds, page, endpoint = "topstories" }) => async
 
     }).catch(err => {
         // dispatch({ type: FETCH_STORIES_FAILURE })
-        dispatch({ type: actionSelection.failure })
+        dispatch({ type: actionSelection.failure, payload: err })
     });
+}
+
+
+export const fetchStory = (id) => async dispatch => {
+    dispatch({ type: FETCH_STORY_REQUEST });
+
+    getStory(id).then(story => {
+        console.log(story);
+        dispatch({ type: FETCH_STORY_SUCCESS, payload: { story, commentIds: (story.kids !== undefined ? story.kids : []) } })
+        dispatch(getComments({ ids: (typeof story.kids === "undefined" ? [] : story.kids), page: 0 }));
+    }).catch(err => {
+        dispatch({ type: FETCH_STORY_FAILURE, payload: err })
+    })
+}
+
+export const getComments = ({ ids, page }) => dispatch => {
+
+    dispatch({ type: FETCH_COMMENTS_REQUEST });
+
+    console.log('entered inside', ids)
+
+    // if (ids.length === 0) {
+    //     dispatch({ type: FETCH_COMMENTS_SUCCESS, payload: [] });
+    // } else {
+    getCommentsByPage({ ids, page }).then(commments => {
+        dispatch({ type: FETCH_COMMENTS_SUCCESS, payload: commments })
+    }).catch(err => {
+        dispatch({ type: FETCH_COMMENTS_FAILURE, payload: err })
+    })
+    // }
 }
 
 export const filterStories = (keyword) => dispatch => {

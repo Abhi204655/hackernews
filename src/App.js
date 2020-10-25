@@ -109,6 +109,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom';
 
 import Main from './pages/Main'
+import Detail from './pages/Detail'
 
 
 function App() {
@@ -117,6 +118,7 @@ function App() {
             <Switch>
                 <Route exact path="/" component={Main} />
                 <Route exact path="/stories/:endpoint" component={Main} />
+                <Route exact path="/story/detail/:storyId" component={Detail} />
                 <Route path="*">
                     <p>not found</p>
                 </Route>
